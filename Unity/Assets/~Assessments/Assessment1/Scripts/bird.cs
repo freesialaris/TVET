@@ -31,6 +31,7 @@ public class bird : MonoBehaviour
         }
 
         transform.rotation = Quaternion.Lerp(transform.rotation, downRotation, tiltSmooth * Time.deltaTime);
+
     }
     
 }
