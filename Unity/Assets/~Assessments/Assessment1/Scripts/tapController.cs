@@ -9,17 +9,16 @@ public class tapController : MonoBehaviour
     public float tapForce = 30;
     public float tiltSmooth = 5;
     public Vector3 startPos;
-    public GameObject bird;
+
 
     Rigidbody2D rigid;
     Quaternion downRotation;
     Quaternion forwardRotation;
 
-    void start()
+    void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
-        bird = GameObject.Find("Bird");
-        downRotation = Quaternion.Euler(0, 0, -90);
+        downRotation = Quaternion.Euler(0, 0, -30);
         forwardRotation = Quaternion.Euler(0, 0, 35);
 
     }
@@ -28,8 +27,10 @@ public class tapController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            bird.transform.rotation = forwardRotation;
+            
+            transform.rotation = forwardRotation;
             rigid.AddForce(Vector3.up * tapForce, ForceMode2D.Force);
+            rigid.velocity = Vector3.zero;
 
         }
 
