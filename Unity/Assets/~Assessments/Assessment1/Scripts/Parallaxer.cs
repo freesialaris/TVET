@@ -26,13 +26,12 @@ public class Parallaxer : MonoBehaviour
     public float shiftSpeed;
     public float spawnRate;
 
-    public YSpawnRange YSpawnRange;
+    public YSpawnRange ySpawnRange;
     public Vector3 defaultSpawnPos;
     public bool spawnImmediate;
     public Vector3 immediateSpawnPos;
 
     float spawnTimer;
-
     PoolObject[] poolObjects;
 
     void Awake()
@@ -45,33 +44,44 @@ public class Parallaxer : MonoBehaviour
 
     }
 
-    void OnEnable()
-    {
-
-    }
-
-    void OnDisable()
-    {
-
-    }
 
     void Update()
     {
+        Shift();
+        spawnTimer += Time.deltaTime;
+        if (spawnTimer > spawnRate)
+        {
 
+            spawnTimer = 0;
+        }
     }
 
     void Configure()
     {
+        poolObjects = new PoolObject[poolSize];
+        for (int i = 0; i < poolObjects.Length; i++)
+        {
+            GameObject go = Instantiate(Prefab) as GameObject;
+            Transform t = go.transform;
+            t.SetParent(transform);
+            poolObjects[i] = new PoolObject(t);
+        }
 
+        if (spawnImmediate)
+        {
+            SpawnImmediate();
+        }
     }
 
-    void Spawn()
-    {
-
-    }
 
     void SpawnImmediate()
     {
+        Transform t = GetPoolObject();
+        if (t == null) return;
+        Vector3 pos = Vector3.zero;
+        pos.x = immediateSpawnPos.x;
+        pos.y = Random.Range(ySpawnRange.min, ySpawnRange.max);
+        t.position = pos;
 
     }
 
@@ -79,28 +89,28 @@ public class Parallaxer : MonoBehaviour
     {
         for (int i = 0; i < poolObjects.Length; i++)
         {
-            poolObjects[i].transform.position += -Vector3.right * shiftSpeed * Time.deltaTime;
+            poolObjects[i].transform.localPosition += -Vector3.right * shiftSpeed;
             CheckDisposeObject(poolObjects[i]);
         }
     }
 
     void CheckDisposeObject(PoolObject poolObject)
     {
-        if (poolObject.transform.position.x < -defaultSpawnPos.x)
+        if (poolObject.transform.position.x < -2)
         {
             poolObject.Dispose();
-            poolObject.transform.position = Vector3.one * 1000;
+            poolObject.transform.position = Vector2.one;
         }
     }
 
     Transform GetPoolObject()
     {
         for (int i = 0; i < poolObjects.Length; i++)
-        { 
+        {
             if (!poolObjects[i].inUse)
             {
                 poolObjects[i].Use();
-                return poolObjects[i];
+                return poolObjects[i].transform;
             }
         }
         return null;
