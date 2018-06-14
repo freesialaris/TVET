@@ -78,7 +78,7 @@ public class Parallaxer : MonoBehaviour
     {
         Transform t = GetPoolObject();
         if (t == null) return;
-        Vector3 pos = Vector3.zero;
+        Vector3 pos = Vector3.one;
         pos.x = immediateSpawnPos.x;
         pos.y = Random.Range(ySpawnRange.min, ySpawnRange.max);
         t.position = pos;
@@ -96,10 +96,13 @@ public class Parallaxer : MonoBehaviour
 
     void CheckDisposeObject(PoolObject poolObject)
     {
-        if (poolObject.transform.position.x < -2)
+        if (poolObject.transform.position.x < -2.25)
         {
             poolObject.Dispose();
             poolObject.transform.position = Vector2.one;
+            Vector3 pos = Vector3.one;
+
+            SpawnImmediate();
         }
     }
 
